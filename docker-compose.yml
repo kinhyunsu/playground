@@ -1,0 +1,89 @@
+# 레거시 학습 환경: MSSQL + Oracle + Tomcat(JSP)
+#   docker compose up -d --build
+#   http://localhost:8080
+services:
+
+  # ---------------------------------------------------------------- MSSQL
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64          # Apple Silicon이면 Docker Desktop의 Rosetta 옵션을 켜세요
+    container_name: pg-mssql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Playground!234"
+      MSSQL_PID: "Developer"
+      TZ: "Asia/Seoul"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+      - ./sql-practice:/practice:ro
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b -o /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  # MSSQL 이미지는 초기화 스크립트 기능이 없어서, sqlcmd로 한 번 실행하고 종료하는 컨테이너를 둡니다.
+  mssql-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    container_name: pg-mssql-init
+    depends_on:
+      mssql:
+        condition: service_healthy
+    volumes:
+      - ./db/mssql:/scripts:ro
+    entrypoint: ["/bin/bash", "/scripts/init.sh"]
+    environment:
+      MSSQL_SA_PASSWORD: "Playground!234"
+    restart: "no"
+
+  # ---------------------------------------------------------------- Oracle
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart   # amd64 / arm64 모두 지원
+    container_name: pg-oracle
+    environment:
+      ORACLE_PASSWORD: "Playground1234"            # SYS / SYSTEM 비밀번호
+      TZ: "Asia/Seoul"
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./db/oracle:/container-entrypoint-initdb.d:ro   # 최초 1회만 실행됨
+      - ./sql-practice:/practice:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  # ---------------------------------------------------------------- Tomcat + JSP
+  app:
+    build: ./webapp
+    container_name: pg-app
+    depends_on:
+      mssql-init:
+        condition: service_completed_successfully
+      oracle:
+        condition: service_healthy
+    environment:
+      TZ: "Asia/Seoul"
+      MSSQL_URL: "jdbc:sqlserver://mssql:1433;databaseName=PLAYDB;encrypt=false"
+      MSSQL_USER: "play"
+      MSSQL_PASSWORD: "Play!2345"
+      ORACLE_URL: "jdbc:oracle:thin:@//oracle:1521/FREEPDB1"
+      ORACLE_USER: "play"
+      ORACLE_PASSWORD: "play1234"
+    ports:
+      - "8080:8080"
+    volumes:
+      # JSP/JS/CSS는 마운트되어 있어서 저장 후 새로고침만 하면 바로 반영됩니다.
+      # (Java 클래스를 고쳤을 때만 docker compose up -d --build app)
+      - ./webapp/src/main/webapp:/usr/local/tomcat/webapps/ROOT
+
+volumes:
+  mssql-data:
+  oracle-data:

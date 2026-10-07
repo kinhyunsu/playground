@@ -1,0 +1,13 @@
+target/
+*.class
+.idea/
+.vscode/
+*.iml
+.DS_Store
+.env
+
+# IBSheet는 상용 라이선스 제품이므로 저장소에 올리지 않습니다.
+webapp/src/main/webapp/lib/ibsheet7/*
+!webapp/src/main/webapp/lib/ibsheet7/README.md
+webapp/src/main/webapp/lib/ibsheet8/*
+!webapp/src/main/webapp/lib/ibsheet8/README.md

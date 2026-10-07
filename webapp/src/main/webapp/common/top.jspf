@@ -1,0 +1,40 @@
+<%--
+  공통 상단 include (정적 include: <%@ include file="..." %>)
+  - 이 파일의 코드는 include 하는 JSP 안에 "그대로 복사"되어 컴파일됩니다.
+  - 그래서 여기서 선언한 변수 db, pageTitle 을 본문 JSP에서 바로 쓸 수 있습니다.
+  - include 하기 전에 pageTitle 변수를 선언해 두세요.
+--%>
+<%@ page import="java.sql.*, java.util.*, com.playground.DB, com.playground.Json, com.playground.Html" %>
+<%
+    // 선택한 DB를 세션에 저장 (?db=mssql / ?db=oracle 로 전환)
+    if (request.getParameter("db") != null) {
+        session.setAttribute("db", DB.normalize(request.getParameter("db")));
+    }
+    String db = (String) session.getAttribute("db");
+    if (db == null) db = DB.MSSQL;
+    String ctx = request.getContextPath();
+%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title><%= pageTitle %> - Legacy Playground</title>
+<link rel="stylesheet" href="<%= ctx %>/css/style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="<%= ctx %>/">Legacy Playground</a>
+  <nav>
+    <a href="<%= ctx %>/jsp-basic/01_emp_list.jsp">JSP 기본</a>
+    <a href="<%= ctx %>/ibsheet7/emp.jsp">IBSheet7</a>
+    <a href="<%= ctx %>/ibsheet8/emp.jsp">IBSheet8</a>
+    <a href="<%= ctx %>/practice/">실습</a>
+  </nav>
+  <div class="dbsel">
+    DB:
+    <a class="<%= DB.MSSQL.equals(db) ? "on" : "" %>" href="?db=mssql">MSSQL</a>
+    <a class="<%= DB.ORACLE.equals(db) ? "on" : "" %>" href="?db=oracle">Oracle</a>
+  </div>
+</header>
+<main>
+<h1><%= pageTitle %> <small class="badge <%= db %>"><%= db.toUpperCase() %></small></h1>

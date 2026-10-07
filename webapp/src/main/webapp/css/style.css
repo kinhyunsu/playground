@@ -1,0 +1,26 @@
+* { box-sizing: border-box; }
+body { margin: 0; font: 14px/1.5 "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color: #222; background: #f5f6f8; }
+header.top { display: flex; align-items: center; gap: 24px; padding: 10px 20px; background: #1f2d3d; color: #fff; }
+header.top a { color: #cfd8e3; text-decoration: none; }
+header.top a:hover { color: #fff; }
+header.top .brand { font-weight: bold; color: #fff; }
+header.top nav { display: flex; gap: 16px; flex: 1; }
+.dbsel a { padding: 2px 8px; border-radius: 3px; }
+.dbsel a.on { background: #3d8bfd; color: #fff; }
+main { max-width: 1200px; margin: 0 auto; padding: 16px 20px 60px; }
+h1 small.badge { font-size: 12px; vertical-align: middle; padding: 2px 8px; border-radius: 3px; color: #fff; }
+.badge.mssql { background: #c0392b; } .badge.oracle { background: #d35400; }
+table.grid { width: 100%; border-collapse: collapse; background: #fff; }
+table.grid th, table.grid td { border: 1px solid #d9dde3; padding: 5px 8px; }
+table.grid th { background: #eef1f5; }
+td.num { text-align: right; } td.c { text-align: center; }
+form.search, .box { background: #fff; border: 1px solid #d9dde3; padding: 10px 12px; margin: 10px 0; }
+form.search label { margin-right: 12px; }
+input, select, button { font: inherit; padding: 3px 6px; }
+button { cursor: pointer; }
+.sql { background: #272822; color: #f8f8f2; padding: 10px; white-space: pre-wrap; font: 12px/1.4 Consolas, monospace; overflow-x: auto; }
+.ok { color: #1e8449; font-weight: bold; } .err { color: #c0392b; font-weight: bold; }
+.warn { background: #fff8e1; border: 1px solid #f0c36d; padding: 10px 12px; margin: 10px 0; }
+.paging a, .paging b { display: inline-block; margin: 8px 2px; padding: 2px 8px; border: 1px solid #ccc; background: #fff; text-decoration: none; }
+.paging b { background: #3d8bfd; color: #fff; border-color: #3d8bfd; }
+.btns { margin: 8px 0; display: flex; gap: 6px; }
