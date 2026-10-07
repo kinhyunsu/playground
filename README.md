@@ -9,17 +9,39 @@
                     └─ IBSheet 7/8 (js, 직접 복사 필요)
 ```
 
-## 1. 준비물
+## 1. 브라우저만으로 하기 — GitHub Codespaces (설치 없음, 추천)
+
+남의 PC·회사 PC처럼 **아무것도 설치할 수 없을 때** 쓰는 방법입니다.
+GitHub 서버에 개발용 PC를 하나 빌려서, **브라우저 안의 VS Code** 로 코딩하고 실행합니다.
+
+1. 브라우저에서 GitHub 로그인 → 이 저장소 열기
+2. 초록색 **`<> Code`** 버튼 → **Codespaces** 탭 → **Create codespace on (브랜치)**
+   - 머신 크기는 **4-core / 16GB** 를 고르세요 (DB 2개를 같이 띄우기 때문)
+3. 브라우저에 VS Code 가 열리고, 자동으로 `docker compose up` 이 실행됩니다
+   - 처음 한 번은 DB 이미지 다운로드로 **5~10분** 걸립니다. 아래 터미널에서 진행 상황이 보입니다
+4. 다 뜨면 **포트(PORTS) 탭 → 8080 의 🌐 아이콘** 클릭 → 새 탭에 학습 사이트가 열립니다
+5. 왼쪽 탐색기에서 `webapp/src/main/webapp/...jsp` 를 고치고 저장 → 학습 사이트에서 **새로고침**하면 바로 반영
+6. SQL 연습은 학습 사이트의 **[SQL 콘솔]** 메뉴에서 바로 실행 (DBeaver 불필요)
+
+다 쓴 뒤에는 꼭 **정지**하세요: https://github.com/codespaces → 해당 코드스페이스 `…` → *Stop codespace*
+(개인 무료 계정은 매달 120 core-hours = **4-core 기준 약 30시간**, 저장공간 15GB 가 무료입니다.
+정지하면 시간은 차감되지 않지만 저장공간(DB 이미지 포함 약 12GB)은 계속 잡히므로, 한동안 안 쓸 거면 코드스페이스를 삭제했다가 다시 만드세요. 코드는 git push 해 두면 안전합니다.)
+
+> **주의 — 회사 자료**
+> - Codespaces 는 GitHub(외부 클라우드) 서버입니다. **회사 IBSheet 파일·라이선스, 회사 소스, 실제 DB 데이터를 올리지 마세요.**
+>   (회사 보안 규정 위반이 될 수 있고, IBSheet 라이선스는 보통 회사 도메인 전용이라 `*.app.github.dev` 주소에선 동작하지도 않습니다.)
+> - Codespaces 에서는 IBSheet 화면 대신 **서버 쪽(`api/*.jsp`) + JSP + SQL** 위주로 연습하고,
+>   IBSheet 화면 실습은 아이비리더스 평가판을 받거나 회사 개발 PC에서 하는 걸 권장합니다.
+> - 8080 포트는 기본 **Private**(내 GitHub 계정만 접속)입니다. SQL 콘솔이 있으니 **Public 으로 바꾸지 마세요.**
+
+## 2. 내 PC에서 하기 — Docker Desktop (설치 가능한 경우)
 
 - **Docker Desktop** (Windows는 WSL2 백엔드) — 메모리 6GB 이상 할당 권장
-- DB 클라이언트: **DBeaver** (MSSQL/Oracle 둘 다 됨, 무료) — 회사에서 SSMS / Orange / Toad 를 쓰면 그것도 OK
-- 코드 편집기: IntelliJ / VS Code / Eclipse 아무거나
+- DB 클라이언트: **DBeaver** (MSSQL/Oracle 둘 다 됨, 무료) — 또는 학습 사이트의 SQL 콘솔
 - JDK·Maven·Tomcat 설치는 **필요 없습니다** (컨테이너 안에서 빌드/실행)
 
 > **Apple Silicon(M1~M4) Mac**: MSSQL 이미지가 x86 전용이라 Docker Desktop → Settings → General →
 > *"Use Rosetta for x86_64/amd64 emulation"* 을 켜주세요.
-
-## 2. 실행
 
 ```bash
 git clone <이 저장소>
@@ -38,7 +60,7 @@ docker compose ps                 # app 이 running 이면 OK
 | `./scripts/oracle.sh` | Oracle 콘솔(SQL*Plus) |
 | `./scripts/reset-db.sh` | DB를 샘플 데이터 상태로 초기화 |
 
-## 3. 접속 정보
+## 3. 접속 정보 (DBeaver 등 외부 툴용)
 
 | | MSSQL | Oracle |
 |---|---|---|
@@ -58,6 +80,7 @@ playground/
 ├── db/
 │   ├── mssql/   01_database.sql 02_schema.sql 03_data.sql   ← 최초 기동 시 자동 실행
 │   └── oracle/  01_user.sql     02_schema.sql 03_data.sql
+├── .devcontainer/               ← GitHub Codespaces 설정 (브라우저 개발환경)
 ├── sql-practice/
 │   ├── mssql/01_basics.sql      ← T-SQL 단골 문법 (DBeaver 에서 열어 실행)
 │   ├── oracle/01_basics.sql     ← 같은 번호로 Oracle 문법 비교
@@ -74,6 +97,7 @@ playground/
         ├── ibsheet7/emp.jsp                 IBSheet7 사원관리 예제
         ├── ibsheet8/emp.jsp                 IBSheet8 사원관리 예제
         ├── practice/                        실습 과제 뼈대 (TODO 채우기)
+        ├── tools/sql.jsp                    브라우저 SQL 콘솔
         └── lib/ibsheet7, lib/ibsheet8       ★ IBSheet 파일을 직접 복사해 넣는 곳
 ```
 
@@ -96,7 +120,7 @@ IBSheet는 (주)아이비리더스의 **상용 제품**이라 저장소에 들�
 
 ## 6. 추천 학습 순서
 
-1. **SQL** — `sql-practice/mssql/01_basics.sql` 과 `oracle/01_basics.sql` 을 DBeaver 에서 나란히 열고 한 블록씩 실행
+1. **SQL** — `sql-practice/mssql/01_basics.sql` 과 `oracle/01_basics.sql` 을 열어 한 블록씩 복사 → **SQL 콘솔**(또는 DBeaver)에서 실행. 상단 버튼으로 DB 전환
 2. **JSP 기본** — `jsp-basic/01_emp_list.jsp` : 상단 DB 버튼으로 MSSQL ↔ Oracle 을 바꿔가며 화면 하단의 실행 SQL 비교
 3. **CRUD/트랜잭션** — `02_emp_form.jsp` : `setAutoCommit(false)` → `commit` / `rollback`, 프로시저 OUT 파라미터
 4. **프로시저 결과셋** — `03_procedure.jsp` : MSSQL 결과셋 vs Oracle `SYS_REFCURSOR`

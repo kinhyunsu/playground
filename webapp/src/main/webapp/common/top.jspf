@@ -29,6 +29,7 @@
     <a href="<%= ctx %>/ibsheet7/emp.jsp">IBSheet7</a>
     <a href="<%= ctx %>/ibsheet8/emp.jsp">IBSheet8</a>
     <a href="<%= ctx %>/practice/">실습</a>
+    <a href="<%= ctx %>/tools/sql.jsp">SQL 콘솔</a>
   </nav>
   <div class="dbsel">
     DB:

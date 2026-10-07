@@ -1,0 +1,34 @@
+// GitHub Codespaces 설정: 브라우저만으로 코딩 + 실행
+//   GitHub 저장소 → Code → Codespaces → Create codespace
+//   (Docker 안에서 MSSQL / Oracle / Tomcat 을 자동으로 띄웁니다)
+{
+  "name": "Legacy Playground",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  // MSSQL + Oracle 을 같이 띄우려면 메모리가 꽤 필요합니다 (4코어/16GB 권장)
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "16gb"
+  },
+  // 코드스페이스가 켜질 때마다 컨테이너 기동 (처음엔 이미지 다운로드로 5~10분)
+  "postStartCommand": "docker compose up -d --build",
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": { "label": "Legacy Playground (JSP)", "onAutoForward": "openBrowser" },
+    "1433": { "label": "MSSQL", "onAutoForward": "ignore" },
+    "1521": { "label": "Oracle", "onAutoForward": "ignore" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-mssql.mssql"
+      ],
+      "settings": {
+        "files.encoding": "utf8",
+        "files.associations": { "*.jspf": "jsp" }
+      }
+    }
+  }
+}

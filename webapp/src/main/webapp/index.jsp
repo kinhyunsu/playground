@@ -30,6 +30,8 @@
 </table>
 <p>Oracle은 첫 기동 때 1~2분 정도 걸립니다. 실패로 나오면 잠시 뒤 새로고침하세요.</p>
 
+<p><a href="tools/sql.jsp"><b>▶ SQL 콘솔</b></a> — 브라우저에서 바로 SQL 실행 (DBeaver 없이 연습)</p>
+
 <h2>학습 순서</h2>
 <ol>
   <li><a href="jsp-basic/01_emp_list.jsp">JSP 기본 ① 목록/검색/페이징</a> — 스크립틀릿, PreparedStatement, MSSQL vs Oracle 페이징</li>
