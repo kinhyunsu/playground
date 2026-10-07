@@ -3,10 +3,8 @@
 //   (Docker 안에서 MSSQL / Oracle / Tomcat 을 자동으로 띄웁니다)
 {
   "name": "Legacy Playground",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
-  },
+  // Codespaces 기본 이미지: Docker 가 이미 들어 있고 GitHub 서버에 캐시돼 있어서 빨리 뜹니다
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
   // MSSQL + Oracle 을 같이 띄우려면 메모리가 꽤 필요합니다 (4코어/16GB 권장)
   "hostRequirements": {
     "cpus": 4,
