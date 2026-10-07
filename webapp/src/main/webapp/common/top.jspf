@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" %>
 <%--
   공통 상단 include (정적 include: <%@ include file="..." %>)
   - 이 파일의 코드는 include 하는 JSP 안에 "그대로 복사"되어 컴파일됩니다.

@@ -13,7 +13,7 @@
 
 <div id="libMissing" class="warn" style="display:none">
   IBSheet8 라이브러리를 찾을 수 없습니다. <code>lib/ibsheet8/README.md</code> 를 보고 파일을 복사하세요.<br>
-  라이브러리 없이도 서버 응답은 확인할 수 있습니다:
+  라이브러리 없이도 <b>[조회]</b> 를 누르면 요청 → 서버 응답(JSON) → 표 순서로 흐름을 볼 수 있습니다. 응답만 보기:
   <a href="<%= ctx %>/api/emp_search.jsp?ver=8" target="_blank">api/emp_search.jsp?ver=8</a>
 </div>
 
@@ -30,9 +30,19 @@
 </div>
 
 <div id="sheetDiv" style="width:100%; height:450px"></div>
+<div id="fallback" style="display:none"></div>
+<script src="<%= ctx %>/common/sheet-fallback.js"></script>
 
 <script>
 var CTX = '<%= ctx %>';
+
+// IBSheet 없이 볼 때 쓰는 컬럼 목록 (아래 options.Cols 의 Header / Name 과 같음)
+var FALLBACK_COLS = [
+  { Header: '사번', key: 'EMP_NO' }, { Header: '이름', key: 'EMP_NM' }, { Header: '부서', key: 'DEPT_CD' },
+  { Header: '직급', key: 'POS_CD' }, { Header: '입사일', key: 'HIRE_DT' }, { Header: '급여', key: 'SAL' },
+  { Header: '이메일', key: 'EMAIL' }, { Header: '재직', key: 'USE_YN' }
+];
+
 var sheet;   // IBSheet.create 가 반환하는 시트 객체
 
 /* ---------------------------------------------------------------
@@ -78,7 +88,15 @@ async function initSheet() {
 }
 
 function doAction(action) {
-  if (!sheet) return;
+  if (typeof sheet === 'undefined' || !sheet) {
+    // IBSheet 가 없으면: 조회 흐름만 대신 보여주기 (추가/저장 등은 IBSheet 필요)
+    if (action === 'search') {
+      fallbackSearch(CTX + '/api/emp_search.jsp?ver=8&' + new URLSearchParams(new FormData(document.frm)), FALLBACK_COLS, 'data');
+    } else {
+      alert('이 기능은 IBSheet 라이브러리가 있어야 동작합니다.');
+    }
+    return;
+  }
   switch (action) {
     case 'search':
       // doSearch(URL, 파라미터) → 응답 {"data":[...], "IO":{"Result":0}}

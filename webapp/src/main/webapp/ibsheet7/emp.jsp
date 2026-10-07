@@ -13,7 +13,7 @@
 
 <div id="libMissing" class="warn" style="display:none">
   IBSheet7 라이브러리를 찾을 수 없습니다. <code>lib/ibsheet7/README.md</code> 를 보고 파일을 복사하세요.<br>
-  라이브러리 없이도 서버 응답은 확인할 수 있습니다:
+  라이브러리 없이도 <b>[조회]</b> 를 누르면 요청 → 서버 응답(JSON) → 표 순서로 흐름을 볼 수 있습니다. 응답만 보기:
   <a href="<%= ctx %>/api/emp_search.jsp?ver=7" target="_blank">api/emp_search.jsp?ver=7</a>
 </div>
 
@@ -31,9 +31,19 @@
 </div>
 
 <div id="sheetDiv"></div>
+<div id="fallback" style="display:none"></div>
+<script src="<%= ctx %>/common/sheet-fallback.js"></script>
 
 <script>
 var CTX = '<%= ctx %>';
+
+// IBSheet 없이 볼 때 쓰는 컬럼 목록 (아래 initData.Cols 의 Header / SaveName 과 같음)
+var FALLBACK_COLS = [
+  { Header: '사번', key: 'EMP_NO' }, { Header: '이름', key: 'EMP_NM' }, { Header: '부서', key: 'DEPT_CD' },
+  { Header: '직급', key: 'POS_CD' }, { Header: '입사일', key: 'HIRE_DT' }, { Header: '급여', key: 'SAL' },
+  { Header: '이메일', key: 'EMAIL' }, { Header: '재직', key: 'USE_YN' }
+];
+
 
 /* ---------------------------------------------------------------
  * 1. 시트 생성 + 컬럼 정의
@@ -81,7 +91,15 @@ async function initSheet() {
  * 2. 버튼 처리 - 레거시 IBSheet 화면의 전형적인 doAction 패턴
  * --------------------------------------------------------------- */
 function doAction(action) {
-  if (typeof mySheet === 'undefined') return;
+  if (typeof mySheet === 'undefined') {
+    // IBSheet 가 없으면: 조회 흐름만 대신 보여주기 (추가/저장 등은 IBSheet 필요)
+    if (action === 'search') {
+      fallbackSearch(CTX + '/api/emp_search.jsp?ver=7&' + new URLSearchParams(new FormData(document.frm)), FALLBACK_COLS, 'Data');
+    } else {
+      alert('이 기능은 IBSheet 라이브러리가 있어야 동작합니다.');
+    }
+    return;
+  }
   switch (action) {
     case 'search':
       // DoSearch(URL, 파라미터 문자열) → 응답 {"Data":[...]}
